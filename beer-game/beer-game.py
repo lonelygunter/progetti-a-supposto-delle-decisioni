@@ -23,7 +23,7 @@ tot_cost = 0
 curr_cost = 0
 
 for i in range(0, 20):
-    print("----------------------\n" + "| WEEK " + str(i+1) + "\n----------------------")
+    print("-------------------------\n" + "| WEEK " + str(i+1) + "\n-------------------------")
     amount_supp = beer_demand.get_demand(i)
     o_cost = 0
     inv_level = inv_level - amount_supp + arr_1
@@ -64,4 +64,4 @@ for i in range(0, 20):
     print("| arr 2 week.......| " + str(arr_2))
     print("| tot cost.........| " + str(tot_cost))
     print("| curr cost........| " + str(curr_cost))
-    print("----------------------\n")
+    print("-------------------------\n")

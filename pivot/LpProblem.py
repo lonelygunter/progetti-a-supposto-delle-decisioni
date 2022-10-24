@@ -1,3 +1,5 @@
+from nis import cat
+from warnings import catch_warnings
 import numpy as np
 from zmq import PROBE_ROUTER
 
@@ -67,9 +69,9 @@ class LpProblem():
         # set max -> min
         if self.objective.max == True:
             self.objective.max = False
-        # set z -> -z
-        for item in self.objective.c.items():
-            self.objective.c.update({item[0]: (item[1] * -1)})
+            # set z -> -z
+            for item in self.objective.c.items():
+                self.objective.c.update({item[0]: (item[1] * -1)})
 
         # turn contraints into standard: <=, >= -> var, = 
         for i in range(0, len(self.constraints)):
@@ -90,7 +92,25 @@ class LpProblem():
                 tmp[str(index)] = var[1] 
                 index = index + 1
 
-        dict(sorted(tmp.items(), key = lambda item: item[1]))
+        # sort negative values:
+        if len(tmp) != 0:
+            tmp = sorted(tmp.items(), key = lambda item: item[1])
+
+            i = 0
+            x = ({})
+            try :
+                while tmp[i][1] == tmp[i+1][1]:
+                    if tmp[i][0] < tmp[i+1][0]:
+                        x[tmp[i][0]] = tmp[i][1]
+                    else:
+                        x[tmp[i+1][0]] = tmp[i+1][1]
+                    i = i + 1
+            except:
+                print()
+            
+            if tmp[0][1] < tmp[1][1]:
+                tmp = ({tmp[0][0]: tmp[0][1]})
+            
 
 
         # return tableau
@@ -111,6 +131,6 @@ class LpProblem():
 
 constraint_1 = LinearConstraint({'x1': 1, 'x2': 2}, 'L', 10)  # x1 + 2 x2 <= 10
 constraint_2 = LinearConstraint({'x1': 2, 'x2': 1}, 'L', 10)  # 2 x1 + x2 <= 10
-objective = LinearObjective({'x1': 1, 'x2': 1}, True)  # Max z = x1 + x2
+objective = LinearObjective({'x1': 10, 'x2': 10}, True)  # Max z = x1 + x2
 problem_1 = LpProblem([constraint_1, constraint_2], objective)
 problem_1.buildTableau()

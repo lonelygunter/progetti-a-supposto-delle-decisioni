@@ -1,4 +1,5 @@
 import numpy as np
+from zmq import PROBE_ROUTER
 
 class LinearConstraint ():
     '''
@@ -62,27 +63,40 @@ class LpProblem():
         :return:
         '''
 
-        # It's your turn !
-        var = []
+        # turn objective into standard: max z -> min -z
+        # set max -> min
+        if self.objective.max == True:
+            self.objective.max = False
+        # set z -> -z
+        for item in self.objective.c.items():
+            self.objective.c.update({item[0]: (item[1] * -1)})
 
-        # check all variable
-        for key in self.constraints.a.keys():
-            var.append(key)
+        # turn contraints into standard: <=, >= -> var, = 
+        for i in range(0, len(self.constraints)):
+            # set <= -> = + +var
+            if self.constraints[i].type == 'L':
+                self.constraints[i].type = 'E'
+                self.constraints[i].a["x"] = 1
+            # set >= -> = + -var
+            if self.constraints[i].type == 'G':
+                self.constraints[i].type = 'E'
+                self.constraints[i].a["x"] = -1
         
-        var = list(set(var))
-        
-        # if not == add +-variable
-        for max in self.constraints:
-            if max.type == 'L':
-                max.a['X'] = 1
-            elif max.type == 'G':
-                max.a['X'] = -1
-            
-            # change max to min and z to -z
-            elif self.objective.max == True:
-                self.objective.max == False
-                for obj in self.objective.c:
-                    boo[obj.key]
+        # check if f.o. have negative values:
+        index = 0
+        tmp = ({})
+        for var in self.objective.c.items():
+            if var[1] < 0:
+                tmp[str(index)] = var[1] 
+                index = index + 1
+
+        dict(sorted(tmp.items(), key = lambda item: item[1]))
+
+
+        # return tableau
+        matrix = np.array[[]]
+        matrix.append(1)
+
 
     def makePivot(self, r, s):
         '''
@@ -99,3 +113,4 @@ constraint_1 = LinearConstraint({'x1': 1, 'x2': 2}, 'L', 10)  # x1 + 2 x2 <= 10
 constraint_2 = LinearConstraint({'x1': 2, 'x2': 1}, 'L', 10)  # 2 x1 + x2 <= 10
 objective = LinearObjective({'x1': 1, 'x2': 1}, True)  # Max z = x1 + x2
 problem_1 = LpProblem([constraint_1, constraint_2], objective)
+problem_1.buildTableau()

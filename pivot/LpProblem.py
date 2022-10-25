@@ -73,49 +73,93 @@ class LpProblem():
             for item in self.objective.c.items():
                 self.objective.c.update({item[0]: (item[1] * -1)})
 
-        # turn contraints into standard: <=, >= -> var, = 
+        # check max number of variable
+        nMinVar = 0
+        nMaxCons = 0
+        for cons in self.constraints:
+            if len(cons.a) > nMinVar:
+                nMinVar = len(cons.a)
+            nMaxCons += 1
+        
+        # initialize tebleau
+        tableau = np.zeros(((nMaxCons+1), (nMinVar+nMaxCons+1)))
+
+        # turn contraints into standard: <=, >= -> var, =
+        nMaxVar = nMinVar
+        gap = 0
         for i in range(0, len(self.constraints)):
             # set <= -> = + +var
             if self.constraints[i].type == 'L':
+                nMaxVar += 1
                 self.constraints[i].type = 'E'
-                self.constraints[i].a["x"] = 1
+                self.constraints[i].a["x" + str(nMaxVar)] = 1
             # set >= -> = + -var
-            if self.constraints[i].type == 'G':
+            elif self.constraints[i].type == 'G':
+                nMaxVar += 1
                 self.constraints[i].type = 'E'
-                self.constraints[i].a["x"] = -1
+                self.constraints[i].a["x" + str(nMaxVar)] = -1
+            
+            # insert constraint row a
+            j = 0
+            for valA in self.constraints[i].a.values():
+                if j < nMinVar:
+                    tableau[i, j] = valA
+                else:
+                    tableau[i, j+gap] = valA
+                    gap += 1
+                
+                j+=1
+        
+            # insert constrint row b
+            tableau[i, (nMinVar+nMaxCons)] = self.constraints[i].b
+        
+
+        # insert objective row
+        i =0
+        for val in self.objective.c.values():
+            tableau[nMaxCons, i] = val
+            i += 1
+
+
+
+
         
         # check if f.o. have negative values:
         index = 0
-        tmp = ({})
+        neg = ({})
         for var in self.objective.c.items():
             if var[1] < 0:
-                tmp[str(index)] = var[1] 
-                index = index + 1
+                neg[str(index)] = var[1] 
+                index += 1
 
         # sort negative values:
-        if len(tmp) != 0:
-            tmp = sorted(tmp.items(), key = lambda item: item[1])
+        if len(neg) != 0:
+            neg = sorted(neg.items(), key = lambda item: item[1])
 
             i = 0
-            x = ({})
+            res = ({})
             try :
-                while tmp[i][1] == tmp[i+1][1]:
-                    if tmp[i][0] < tmp[i+1][0]:
-                        x[tmp[i][0]] = tmp[i][1]
+                while neg[i][1] == neg[i+1][1]:
+                    if neg[i][0] < neg[i+1][0]:
+                        res[neg[i][0]] = neg[i][1]
                     else:
-                        x[tmp[i+1][0]] = tmp[i+1][1]
-                    i = i + 1
+                        res[neg[i+1][0]] = neg[i+1][1]
+                    i += 1
             except:
-                print()
+                print("range out, but no problem mate")
             
-            if tmp[0][1] < tmp[1][1]:
-                tmp = ({tmp[0][0]: tmp[0][1]})
-            
+            if neg[0][1] < neg[1][1]:
+                res = ({neg[0][0]: neg[0][1]})
 
+    def argmin(self, n):
+        '''
+        This method find the min between numbers
+        :param n: a dictionary with
+        - key = tableau column
+        - value = numer to compare
+        '''
 
-        # return tableau
-        matrix = np.array[[]]
-        matrix.append(1)
+        # 
 
 
     def makePivot(self, r, s):
@@ -127,6 +171,8 @@ class LpProblem():
         '''
 
         # It's your turn !
+
+
 
 
 constraint_1 = LinearConstraint({'x1': 1, 'x2': 2}, 'L', 10)  # x1 + 2 x2 <= 10

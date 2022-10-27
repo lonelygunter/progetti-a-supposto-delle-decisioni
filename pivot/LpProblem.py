@@ -1,9 +1,11 @@
 from ast import arg
+from re import L
 from uuid import NAMESPACE_X500
 import numpy as np
 
 nMinVar = 0
 nMaxCons = 0
+nMaxVar = 0
 
 class LinearConstraint ():
     '''
@@ -61,6 +63,7 @@ class LpProblem():
         self.objective = objective
         self.tableau = None
 
+
     def buildTableau(self):
         '''
         This method puts the problem in tableau (standard) form
@@ -68,6 +71,7 @@ class LpProblem():
         '''
         global nMaxCons
         global nMinVar
+        global nMaxVar
 
         # turn objective into standard: max z -> min -z
         # set max -> min
@@ -124,7 +128,9 @@ class LpProblem():
             i += 1
 
         # return tableau
+        print(tableau)
         return tableau
+
 
     def argmin(self, n):
         '''
@@ -139,60 +145,124 @@ class LpProblem():
 
         # in case of equal values
         i = 0
-        res = {}
+        res = ({})
         try :
             while n[i][1] == n[i+1][1]:
                 # take minus index
                 if n[i][0] < n[i+1][0]:
                     res[n[i][0]] = n[i][1]
                 else:
-                    res[n[i+1][0]] = n[i+1][1]
+                    res.update({n[i+1][0]: n[i+1][1]})
                 i += 1
         except:
             print("u'r out of range but no problem mate, just chill :)")
         
         # in case of only one max negative value
-        if n[0][1] < n[1][1]:
-            res = ({n[0][0]: n[0][1]})
+        try:
+            if n[0][1] < n[1][1]:
+                res[n[0][0]] = n[0][1]
+            elif n[0][1] > n[1][1]:
+                res[n[1][0]] = n[1][1]
+        except:
+            print("u'r out of range but no problem mate, just chill :)")
+            return dict(n)
+
         
         # return the result
         return res
 
 
-    def makePivot(self, r, s):
+    def checkNegFo(self):
         '''
-        This method performs a pivot operation on the tableau
-        :param r: pivot row
-        :param s: pivot columns
-        :return:
+        This method find negative value in f.o.
+        :return: dictionary of values with:
+        - key: variable number (1 = x1, ...)
+        - value: negative number
+        '''
+        global nMaxCons
+        global nMaxVar
+
+        neg = {}
+        for i in range(0, nMaxVar):
+            if self.tableau[nMaxCons, i] < 0:
+                neg.update({i: self.tableau[nMaxCons, i]})
+
+        return neg
+
+
+    def findPivot(self):
+        '''
+        This method find Pivot numerbers
+        :return: coordinate where make Pivot
         '''
         global nMaxCons
 
         # check if f.o. have negative values:
-        neg = {}
-        for var in self.objective.c.items():
-            if var[1] < 0:
-                neg.update({var[0]: var[1]})
+        neg = self.checkNegFo()
 
         # sort negative values:
         if len(neg) != 0:
             neg = sorted(neg.items(), key = lambda item: item[1])
+        else:
+            return None
 
         # take min value from dictionary 'neg'
-        neg = list(self.argmin(neg))
+        neg = self.argmin(neg)
 
         # take arguments for argmin
         argminNum = {}
+        sPiv = 0
         for i in range(0, nMaxCons):
-            for var in self.constraints[i].a.items():
-                var = list(var)
-                if var[0] == (neg[0]):
-                    argminNum[i+1] = (self.constraints[i].b/var[1])
-
+            for negVar in neg.keys():
+                argminNum[i] = (self.tableau[i, nMaxVar]/self.tableau[i, negVar])
+                sPiv = negVar
 
         # call argmin function to determin min value
-        pPiv = self.argmin(list(argminNum.items()))
-        i = 0
+        rPiv = list(self.argmin(list(argminNum.items())))
+
+        coord = (rPiv[0], sPiv)
+        print("Pivot in (", coord[0], ", ", coord[1], ")")
+
+        return coord
+
+
+    def bfs(self):
+        '''
+        This method find the basic feasible solution
+        :return: 
+        '''
+        global nMaxVar
+        
+        # loop while not have BFS
+        while bool(self.checkNegFo()):
+            # find coordinate where make Pivot function
+            rsPiv = self.findPivot()
+
+            # check if we are in BFS
+            if rsPiv is None:
+                print("BFS !!!!!")
+                return 0
+
+            # take number of coordinate
+            nPiv = self.tableau.item(rsPiv[0], rsPiv[1])
+            
+            # first operation to tranform Pivot coordinate in "1"
+            for i in range(0, nMaxVar+1):
+                self.tableau[rsPiv[0], i] /= nPiv
+            
+            print(self.tableau, "\n")
+            
+            # swap Pivot row with first row
+            self.tableau[[rsPiv[0], 0]] = self.tableau[[0, rsPiv[0]]]
+
+            # operation to tranform other row of tableau
+            for i in range(1, nMaxCons+1):
+                stat = self.tableau[i, rsPiv[1]]
+                for j in range(0, nMaxVar+1):
+                    self.tableau[i, j] += (self.tableau[0, j] * (stat * -1.0))
+                
+            print(self.tableau, "\n")
+
 
 
 
@@ -201,4 +271,4 @@ constraint_2 = LinearConstraint({1: 1, 2: 2}, 'L', 10)  # 2 x1 + x2 <= 10
 objective = LinearObjective({1: 10, 2: 10}, True)  # Max z = x1 + x2
 problem_1 = LpProblem([constraint_1, constraint_2], objective)
 problem_1.tableau = problem_1.buildTableau()
-problem_1.makePivot(2, 3)
+problem_1.bfs()

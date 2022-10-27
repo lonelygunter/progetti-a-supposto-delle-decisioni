@@ -128,7 +128,7 @@ class LpProblem():
             i += 1
 
         # return tableau
-        print(tableau)
+        print("Tableau:\n", tableau)
         return tableau
 
 
@@ -155,7 +155,7 @@ class LpProblem():
                     res.update({n[i+1][0]: n[i+1][1]})
                 i += 1
         except:
-            print("u'r out of range but no problem mate, just chill :)")
+            print()
         
         # in case of only one max negative value
         try:
@@ -164,7 +164,6 @@ class LpProblem():
             elif n[0][1] > n[1][1]:
                 res[n[1][0]] = n[1][1]
         except:
-            print("u'r out of range but no problem mate, just chill :)")
             return dict(n)
 
         
@@ -221,7 +220,7 @@ class LpProblem():
         rPiv = list(self.argmin(list(argminNum.items())))
 
         coord = (rPiv[0], sPiv)
-        print("Pivot in (", coord[0], ", ", coord[1], ")")
+        print("Pivot in (", coord[0], ", ", coord[1], "):")
 
         return coord
 
@@ -249,8 +248,6 @@ class LpProblem():
             # first operation to tranform Pivot coordinate in "1"
             for i in range(0, nMaxVar+1):
                 self.tableau[rsPiv[0], i] /= nPiv
-            
-            print(self.tableau, "\n")
             
             # swap Pivot row with first row
             self.tableau[[rsPiv[0], 0]] = self.tableau[[0, rsPiv[0]]]

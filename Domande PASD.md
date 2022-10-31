@@ -14,7 +14,7 @@
 
    > decisione non strutturata: richiede creatività e/o esperienza
 
-   > decisione semi-strutturata: usate per valutare le prestazioni di un sistema che magari presenta dei comportamenti randomici
+   > decisione semi-strutturata: usate per descrive solo in parte dei procedimenti standardizzati
 
 3. fornire un esempio di decisione strategica
    > rifornimento di magazzino per l'intero anno 
@@ -41,23 +41,28 @@
    > tramite un'istruzione sintetica sviluppa delle azioni per raggiungere il goal cercando di gestire eventuali imprevisti
 
 5. qual è la relazione tra Machine Learning e Data Mining?
-   > fanno entrambi parte dell'Artifical Intelligence, il primo di occupa dell'apprendimento automatico e dell'esperienza pregresse di agenti, la seconda dell'estrazione di pattern da dai dati trovando delle regolarità o trend
+   > fanno entrambi parte dell'Artifical Intelligence, il primo di occupa dell'apprendimento automatico e dell'esperienza pregresse di agenti, la seconda studia l'estrazione di pattern dai dati seguendo pattern specifici
 
 6. quale è la relazione tra Data Mining e Knowledge Discovery nei Databases?
-   > 
+   > e1 un processo automatico per la scoperta di pattern o regole presenti in grandi quantita1 di dati. Si procede quindi con selezione, pulizia e trasformazione dei dati per poi applicare il Data Mining e la seguente valutazione del pattern
 
 
 ## Ottimizzazione base
 
 1. cos'è una soluzione ammissibile?
-   > 
+   > e1 una soluzione presente nella regione ammissibile di un proplema. Quest'ultima viene individuata tramite la definizione dei vincoli imposti sul problema, infatti rappresenteranno la delimitazione della nostra regione ammissibile nella quale ci potremo muovere per trovare la soluzione ottima
+
 2. fornire un esempio di soluzione ammissibile del problema senza soluzione ottima
+   > una qualunque soluzione presente nella regione ottima ma che non sia la stessa della soluzione ottimale per il problema
+
 3. risolvere graficamente il seguente problema di ottimizzazione:
 $$\max z = -2x_1 + x_2$$
 con vincoli:
-- $2x_1 x_2 = 10$
+- $2x_1 + x_2 = 10$
 - $x_1 + 2x_2 \leq 10$
 - $x_1, x_2 \geq 0$
+
+![soluzione es 3.3](sol3-3.jpeg)
 
 
 ## Ottimizzazione del modello

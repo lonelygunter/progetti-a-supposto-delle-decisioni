@@ -226,3 +226,26 @@ con vincoli:
 
 4. considerando il seguente problema di ottimizzazione lineare intera e i suoi rilassamenti ... eseguire uno step dell'algoritmo di Branch-and-Bound
    > ...
+
+
+## Euristica costruttiva
+1) Descrivi lo pseudocodice dell'algoritmo greedy
+2) Fornire lo pseudocodice dell'algoritmo relax-and-fix
+3) Descrivere l'algoritmo dell'orizzonte mobile
+4) Dato un TSP determinare una soluzione fattibile con un algoritmo avido con n = 4 e
+$$C=
+   \left[ {\begin{array}{cccc}
+      0 & 10 & 5 & 2 \\
+      10 & 0 & 7 & 3 \\
+      5 & 5 & 0 & 1 \\
+      2 & 2 & 3 & 0 \\
+   \end{array} } \right]
+   $$
+
+
+## Ottimizzazione multiobiettivo
+1) Che cos'è una soluzione di Pareto?
+2) Qual è il metodo dei vincoli?
+3) Qual è il metodo del peso?
+4) Descrivi il metodo a priori.
+5) Dati due obiettivi (z1 da massimizzare e z2 da minimizzare) e soluzioni fattibili

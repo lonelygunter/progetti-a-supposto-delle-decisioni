@@ -19,8 +19,8 @@
 3. fornire un esempio di decisione strategica
    > rifornimento di magazzino per l'intero anno 
 
-4. lo scheduling del generatore dell'impianto elettrico è una decisione strategica, tattica o operazionale?
-   > decisione strategica
+4. lo scheduling del generatore dell'impianto elettrico è una decisione strategica, tattica o operativa?
+   > decisione operativa
 
 5. illustrare la relazione tra decisione stategica e non strutturata
    > dovendo prendere una decisione di lungo periodo e che coninvolge notevoli somme di denaro (strategica) è più ragionevole usare creatività e/o esperienza (non strutturata) 
@@ -53,7 +53,7 @@
    > è una soluzione presente nella regione ammissibile di un proplema. Quest'ultima viene individuata tramite la definizione dei vincoli imposti sul problema, infatti rappresenteranno la delimitazione della nostra regione ammissibile nella quale ci potremo muovere per trovare la soluzione ottima
 
 2. fornire un esempio di soluzione ammissibile del problema senza soluzione ottima
-   > una qualunque soluzione presente nella regione ottima ma che non sia la stessa della soluzione ottimale per il problema
+   > unbounded ??????
 
 3. risolvere graficamente il seguente problema di ottimizzazione:
 $$\max z = -2x_1 + x_2$$
@@ -88,7 +88,25 @@ con vincoli:
 1. convertire il seguente problema alla forma standard: ...
    $$min z = 10x_1 - 2x_2$$
    s.t.
-   - ...
+   - $x_1 + x_2 + x_3 = 10$
+   - $-x_1 + x_2 = 4$
+   - $x_2 - x_4 = 2$
+   - $y_1 = -x_1 \geq 0$
+
+   allora abbiamo:
+   - $-y_1 + x_2 + x_3 = 10$
+   - $y_1 + x_2 = 4$
+   - $x_2 - x_4 = 2$
+
+   con $\min z = -10y_1 - 2x_2$, ma dato che $x_2$ non è vincolata in segno la sostituisco con 2 variabili di slack: $x_2 = x_2^+ - x+2^-$
+
+   - $-y_1 + x_2^+ - x+2^- + x_3 = 10$
+   - $y_1 + x_2^+ - x+2^- = 4$
+   - $x_2^+ - x+2^- - x_4 = 2$
+   - $y_1, x_2^+, - x+2^-, x_3, x_4  \geq 0$
+
+   con $\min z = -10y_1 -2(x_2^+ - x+2^-)$
+
 2. eseguire un passaggio dell'algoritmo del simplesso: ...
    $$
    \left[ {\begin{array}{cccccc}
@@ -116,7 +134,8 @@ con vincoli:
       -30 & -20 & 0 & 0 & 0 & 0\\
    \end{array} } \right]
    $$
-   $$I_B=<2,3,4>$$
+   $$I_B=\binom{5}{3}$$
+
 4. descrivere lo pseudocodice dell'algoritmo del simplesso
    1. trovo la BFS
    2. mentre esiste una $\overline{c}_j < 0$ con j variabile non di base $I_N$
@@ -133,10 +152,10 @@ con vincoli:
    > sicuramente non è monotonicamente crescente ma potrebbe essere costante se siamo nel caso di cycling. In alternativa decrescerà quindi andrà a migliorare.
 
 7. cos'è una soluzione di base degenere?
-   > si ha una soluzione di base degenere nel momento in cui questa varaibile è nulla dato che nella colonna $b$ del tableau avremo uno $0$ come valore associato a quella variabile in base. Questo comporta il cycling ...
+   > se ha una soluzione di base degenere nel momento in cui questa variabile è nulla dato che nella colonna $b$ del tableau avremo uno $0$ come valore associato a quella variabile in base. Questo comporta il cycling ...
 
 8. se una BFS è degenere o non ottima, lo può essere la successiva? vuole un $\Delta z = 0$?
-   > non è detto che sia nulla ma se un %\overline{c}_j < 0$ cin un iterazione possiamo migliorare la situazione ma non è detto che non avrò variabili degeneri
+   > non è detto che sia nulla ma se un $\overline{c}_j < 0$ in un'iterazione possiamo migliorare la situazione ma non è detto che non avrò variabili degeneri
 
 9.  guardando il tableau: ... 
     - qual è la soluzione di base associata?
@@ -171,36 +190,52 @@ con vincoli:
     - se non lo è, qual è un'altra BFS ottima? e qual è una soluzione ottima che non sia BFS?
       > se faccio il Pivot sulla variabile non in base ed entra in base, abbiamo una BFS ma avendo $\overline{c}_j = 0$ allora $\Delta z = 0$
 
+      x2 puo cresce (creando infinite soluzioni, ma la osluizione ottima rimane solo una) quanto ci pare ma x3 e x1 restano >= 0 e contemporaneamente Delta z = 0 * x2
+
 11. usando il metodo delle variabili artificiali eseguire una sua iterazione sul seguente problema: ...
    Standardizzo:
    $$\min z = 2x_1 + x_2$$
    s.t
-   - $x_1 - x_2 - x_3 = -1$
-   - $x_1 - x_2 + x_4 = 1$
+   - $x_1 - x_2 - x_3 = 1$
+   - $-x_1 + x_2 \geq 1\ \ \ \Rightarrow\ \ \ -x_1 + x_2 -x_4 = 1$
    - $x_1, x_2, x_3, x_4 \geq 0$
+  
    Variabili artificiali:
-   - $x_1 - x_2 - x_3 + \alpha_1 = -1$
-   - $x_1 - x_2 + x_4 = 1$
-   - $x_1, x_2, x_3, x_4, \alpha_1 \geq 0$ 
+   $$\min \rho = \alpha_1 + \alpha_2$$
+   s.t
+   - $x_1 - x_2 - x_3 + \alpha_1 = 1$
+   - $-x_1 + x_2 - x_4 + \alpha_2 = 1$
+   - $x_1, x_2, x_3, x_4, \alpha_1, \alpha_2 \geq 0$ 
+
+   $$
+   \left[ {\begin{array}{ccccccc}
+      1  & -1 & -1 & 0  & 1 & 0 & 1\\
+      -1 & 1  & 0  & -1 & 0 & 1 & 1 \\
+      2  & 1  & 0  & 0  & 0 & 0 & 0 \\
+   \end{array} } \right]
+   $$ 
+
+   Soluzione ottima
 
 
 ## Algoritmo Branch-and-Bound
 
-1. descrivere lo peseudocodicedel branch and bound (ricerca di profondità)
-   - while $L$ 
-      1. estraggo un problema $k$ da $L$
-      2. branching da 1 to $n_k$
-      3. risolvo $R(P)$
-      4. for $i = 1, ..., n_k$
-         1. if $R(P)$ ha soluzione frazionaria: add child in $L$
-
-2. descrivere lo peseudocodice branch and bound (ricerca del bound migliore)
-   - for $i = 1, ..., n_k$
-     1. if $UB_i \leq z^{best}$: kill child
-     2. elfi $R(P)$ ha soluzione intera: $z^{best} = UB_i$ e $x^{best} = child$
-     3. elif $R(P)$ ha soluzione frazionaia: add child in $L$
-   
-3. vedendo il seguente problema di ottimizzazione lineare intera e il suo rilassamento continuo, cosa fa l'algortimo nel prossimo step?
+1. descrivere lo peseudocodice branch and bound (ricerca del bound migliore)
+   - L := {P } // lista dei sottoproblemi da analizzare
+   - zbest := −∞
+   - xbest := NULL
+   - while L e` vuoto:
+      - estrarre un sottoproblema k da L
+      - branching da 1 → nk
+      - risolvo R(P) e trovo i limiti e l’upperbound UB - - for i = 1 to nk:
+         - if UBi ≤ zbest then:
+           - kill childi
+         - elif R(P) e` una soluzione intera:
+           - zbest := UBi
+           - xbest := childi
+         - elif R(P) e` una soluzione frazionaria:
+           - add childi to L
+   - end for end while
 
 
 ## Ottimizzzione lineare intera (mix)
@@ -230,8 +265,27 @@ con vincoli:
 
 ## Euristica costruttiva
 1) Descrivi lo pseudocodice dell'algoritmo greedy
+   - last = 1 (last = ultimo punto toccato)
+   - S = {2,3,...,n}
+   - while (S ̸= insieme vuoto)
+      - estrarre da S un punto
+         - i = argmin c_last,i
+         - succlast = i
+         - last = i
+   - succlast = 1
+  
 2) Fornire lo pseudocodice dell'algoritmo relax-and-fix
+    - found=true
+    - for(k=1→n):
+    - solvePk(x1,...,xk−1)
+    - if e` inammissibile:
+        - found = false
+        - break;
+    - else: (x′k+1, ..., x′n) e` soluzione fissare xk = x′k
+
 3) Descrivere l'algoritmo dell'orizzonte mobile
+   > al posto di trovare una soluzione per n variabili, prendo un sottoproblema di k variabili e risolvendolo fisso $x_1$ e poi continuo a risolvere non entendo conto delle variabili fissate.
+
 4) Dato un TSP determinare una soluzione fattibile con un algoritmo avido con n = 4 e
 $$C=
    \left[ {\begin{array}{cccc}
@@ -245,7 +299,18 @@ $$C=
 
 ## Ottimizzazione multiobiettivo
 1) Che cos'è una soluzione di Pareto?
+   > è una soluzione che domina tutte le altre
+
 2) Qual è il metodo dei vincoli?
+   > ci permette di risolvere dei problemi con più f.o andando a sceglierne solo una ed imponendo dei vincoli sulle altre in base alle nostre necessità
+
 3) Qual è il metodo del peso?
-4) Descrivi il metodo a priori.
-5) Dati due obiettivi (z1 da massimizzare e z2 da minimizzare) e soluzioni fattibili
+   > ci permette di risolvere dei problemi con più f.o andadno a sommarle tutte in una unica
+
+4) Descrivi il metodo a priori:
+   > 
+
+5) Dati due obiettivi (z1 da massimizzare e z2 da minimizzare) e soluzioni fattibili ...
+   > ottimo individuale (max) rispetto a z1 è E(-5, -1000)
+   > ottimo individuale (min) rispetto a z2 è E(-5, -1000)
+   > abbiamo allora una superior soluzion dato che domina tutte le altre soluzioni

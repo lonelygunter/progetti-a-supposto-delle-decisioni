@@ -11,7 +11,7 @@ d = []
 for t in range(T):
     d.append(beer_demand.get_demand(t))     # demand over the planning horizon
 Q = 1000 # warehouse capacity
-I_0 = 300 # initial inventory level
+I_0 = 540 # initial inventory level
 I_f = 0 # inventory level at the end of the planning horizon
 B_f = 0 # backlog level at the end of the planning horizon
 L = 2 # lead time
@@ -32,23 +32,15 @@ B = LpVariable.dicts('backlog_level', period, lowBound = 0, cat='Continuous')
 model += lpSum([f*y[i] + h*I[i] + b*B[i] + c*x[i] for i in period])
 
 # setup iniziale
-# definisco stato iniziale
 if d[0] < I_0:
     I[0] = I_0 - d[0]
     B[0] = b
 else:
     I[0] = 0
-    B[0] = b + d[0] - I_0
+    B[0] = d[0] - I_0
 
 
 # constraints
-for t in period:
-    model += I[t] - B[t] >= B_f
-
-
-# for t in period[1:]:
-#     model += I[t-1] - B[t-1] + x[t] - d[t] == I[t] - B[t]
-
 for t in period[1:L]:
     model += I[t - 1] - B[t - 1] - d[t] == I[t] - B[t]
 

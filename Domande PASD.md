@@ -1,4 +1,4 @@
-# Esonero scritto PASD - DOMANDE
+# Esonero scritto PASD - DOMANDE PRIMO ESONERO
 
 ## Introduzione a Sistemi a Supporto delle Decisioni ed Intelligenza Artificiale
 

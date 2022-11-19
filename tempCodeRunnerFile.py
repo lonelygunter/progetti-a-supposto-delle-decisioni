@@ -1,0 +1,1 @@
+for nGiocate in LISTA_TIRI_PER_PARTITA:
